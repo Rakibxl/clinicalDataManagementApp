@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp"
+    android:background="@drawable/item_background"> <!-- Assuming you have a drawable for item background -->
+
+    <TextView
+        android:id="@+id/timestampTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="#2c3e50"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/bloodPressureTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="#2c3e50"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/timestampTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/respiratoryRateTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="#2c3e50"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/bloodPressureTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/bloodOxygenTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="#2c3e50"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/respiratoryRateTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/heartBeatRateTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="#2c3e50"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/bloodOxygenTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

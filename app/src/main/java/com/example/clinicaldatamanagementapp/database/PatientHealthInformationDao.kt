@@ -7,7 +7,7 @@ import androidx.room.Query
 
 @Dao
 interface PatientHealthInformationDao {
-    
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPatientHealthInfo(patientHealthInfo: PatientHealthInformationEntity)
 

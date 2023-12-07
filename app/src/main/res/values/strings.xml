@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">ClinicalDataManagementApp</string>
+    <string name="header_image_description" />
+    <string name="welcome_message">Welcome to the Patient Clinical Data Management App</string>
+    <string name="header_description">Welcome to the Patient Clinical Data Management App</string>
+    <string name="view_patient_list">View Patient List</string>
+    <string name="add_new_patient">Add New Patient</string>
+    <string name="add_health_data">Add health data</string>
+    <string name="view_health_data">View health data</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="hometitle">Welcome to the Patient Clinical Data Management App</string>
+
+    <string name="patientlisttitle">View Patient List</string>
+    <string name="patientaddtitle">Add New Patient</string>
+
+
+
+
+
+</resources>
