@@ -14,9 +14,13 @@
 
     <string name="patientlisttitle">View Patient List</string>
     <string name="patientaddtitle">Add New Patient</string>
-
-
-
+    <string name="add_health_data_title">Add Health Data</string>
+    <string name="blood_pressure_text">Blood Pressure</string>
+    <string name="blood_oxygen">Blood oxygen</string>
+    <string name="heart_beat_rate">Heart beat rate</string>
+    <string name="save">Save</string>
+    <string name="mapTypeToggleOnText">Hybrid</string>
+    <string name="mapTypeToggleOffText">Map</string>
 
 
 </resources>

@@ -26,7 +26,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/fragmentContainer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_weight="1" />
 
     <FrameLayout
         android:id="@+id/fragmentContainer"
@@ -35,6 +36,17 @@
         app:layout_constraintTop_toBottomOf="@id/patientsRecyclerView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_weight="1" />
+
+    <ToggleButton
+        android:id="@+id/mapTypeToggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textOff="@string/mapTypeToggleOffText"
+        app:layout_constraintBottom_toBottomOf="@id/fragmentContainer"
+        app:layout_constraintEnd_toEndOf="@id/fragmentContainer"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="150dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,17 +4,27 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import androidx.room.Room
-import com.example.clinicaldatamanagementapp.database.ClinicalDataManagementDatabase
-import com.example.clinicaldatamanagementapp.database.DatabaseBuilder
 import com.example.clinicaldatamanagementapp.database.UserEntity
 import com.example.clinicaldatamanagementapp.databinding.ActivitySignUpBinding
-import kotlinx.coroutines.launch
+
 
 class SignUpActivity : AppCompatActivity() {
 
+    private val userEntities = ArrayList<UserEntity>()
+
     private lateinit var binding: ActivitySignUpBinding
+
+    companion object {
+        val users = ArrayList<User>()
+        init {
+            users.add(User(email = "admin@gmail.com", password = "123456"))
+        }
+    }
+
+    data class User(
+        val email: String,
+        val password: String
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +39,7 @@ class SignUpActivity : AppCompatActivity() {
             val confirmPassword = binding.confirmPasswordEditText.text.toString()
 
             if (validateForm(email, password, confirmPassword)) {
-                signUpUser(email, password)
+              signUpUser(email, password)
             }
         }
 
@@ -66,17 +76,27 @@ class SignUpActivity : AppCompatActivity() {
         return true
     }
 
-    private fun signUpUser(email: String, password: String) {
-        lifecycleScope.launch {
-            val newUser = UserEntity(email = email, password = password)
-                val database = DatabaseBuilder.getDatabase(context = this@SignUpActivity)
 
-            database.userDao().insertUsers(listOf(newUser))
-            runOnUiThread {
-                Toast.makeText(this@SignUpActivity, "Sign Up Successful", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this@SignUpActivity, SignInActivity::class.java)
-                startActivity(intent)
-            }
-        }
+    private fun signUpUser(email: String, password: String) {
+        val newUser = User(email, password)
+        users.add(newUser)
+
+        Toast.makeText(this, "Sign Up Successful", Toast.LENGTH_SHORT).show()
+        val intent = Intent(this, SignInActivity::class.java)
+        startActivity(intent)
     }
+
+//    private fun signUpUser(email: String, password: String) {
+//        lifecycleScope.launch {
+//            val newUser = UserEntity(email = email, password = password)
+//                val database = DatabaseBuilder.getDatabase(context = this@SignUpActivity)
+//
+//            database.userDao().insertUsers(listOf(newUser))
+//            runOnUiThread {
+//                Toast.makeText(this@SignUpActivity, "Sign Up Successful", Toast.LENGTH_SHORT).show()
+//                val intent = Intent(this@SignUpActivity, SignInActivity::class.java)
+//                startActivity(intent)
+//            }
+//        }
+//    }
 }

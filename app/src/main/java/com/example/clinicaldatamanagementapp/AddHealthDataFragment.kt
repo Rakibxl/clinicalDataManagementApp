@@ -9,15 +9,18 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import com.example.clinicaldatamanagementapp.database.HealthData
+import com.example.clinicaldatamanagementapp.database.Patient
+import java.util.UUID
 
 class AddHealthDataFragment : Fragment() {
 
     private lateinit var bloodPressureEditText: EditText
-    private lateinit var respiratoryRateEditText: EditText
     private lateinit var bloodOxygenEditText: EditText
     private lateinit var heartBeatRateEditText: EditText
-//    private lateinit var saveButton: Button
-    private var patientId: Int = -1
+    private lateinit var saveButton: Button
+    private var patientId: UUID? = null
+    private var patientsList: ArrayList<Patient>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,38 +31,57 @@ class AddHealthDataFragment : Fragment() {
         // Initialize views
         val titleTextView = view.findViewById<TextView>(R.id.titleTextView)
         bloodPressureEditText = view.findViewById(R.id.bloodPressureEditText)
-//        respiratoryRateEditText = view.findViewById(R.id.respiratoryRateEditText)
-//        bloodOxygenEditText = view.findViewById(R.id.bloodOxygenEditText)
-//        heartBeatRateEditText = view.findViewById(R.id.heartBeatRateEditText)
-//        saveButton = view.findViewById(R.id.saveButton)
-
-//        saveButton.setOnClickListener { handleSaveData() }
+        bloodOxygenEditText = view.findViewById(R.id.bloodOxygenEditText)
+        heartBeatRateEditText = view.findViewById(R.id.heartBeatRateEditText)
+        saveButton = view.findViewById(R.id.saveButton) // Assuming you have a save button with ID saveButton
 
         arguments?.let {
-            patientId = it.getInt("patientId")
-            titleTextView.text = "Add Health Data for Patient $patientId"
+            patientId = it.getSerializable("patientId") as UUID?
+            val patientName = PatientAddActivity.patients.find { patient -> patient.id == patientId }?.fullName
+            titleTextView.text = patientName?.let { name -> "Add Health Data for Patient $name" } ?: "New Patient"
+        }
+
+        patientId?.let {
+            saveButton.setOnClickListener { handleSaveData() }
+        } ?: run {
+            saveButton.isEnabled = false
+            Toast.makeText(activity, "Error: Patient ID is not available.", Toast.LENGTH_LONG).show()
         }
 
         return view
     }
 
     private fun handleSaveData() {
-        // Logic to handle data locally
         val bloodPressure = bloodPressureEditText.text.toString()
-        val respiratoryRate = respiratoryRateEditText.text.toString()
         val bloodOxygen = bloodOxygenEditText.text.toString()
         val heartBeatRate = heartBeatRateEditText.text.toString()
 
-        // Example: Display a toast message
-        Toast.makeText(activity, "Data Saved Locally:\nBlood Pressure: $bloodPressure\nRespiratory Rate: $respiratoryRate\nBlood Oxygen: $bloodOxygen\nHeart Beat Rate: $heartBeatRate", Toast.LENGTH_LONG).show()
+        // Assuming patientId is passed as a UUID from the activity
+        val patientId = arguments?.getSerializable("patientId") as UUID? ?: run {
+            Toast.makeText(activity, "Error: Patient ID is not available.", Toast.LENGTH_SHORT).show()
+            return
+        }
 
+        // Create a new HealthData object
+        val newHealthData = HealthData(
+            patientId = patientId,
+            bloodPressure = bloodPressure,
+            bloodOxygen = bloodOxygen,
+            heartBeatRate = heartBeatRate
+        )
+
+        healthDataRecords.add(newHealthData)
+
+        Toast.makeText(activity, "Health Data Saved Locally", Toast.LENGTH_SHORT).show()
     }
 
     companion object {
-        fun newInstance(patientId: Int): AddHealthDataFragment {
+        val healthDataRecords = ArrayList<HealthData>()
+
+        fun newInstance(patientId: UUID): AddHealthDataFragment {
             val fragment = AddHealthDataFragment()
             val args = Bundle()
-            args.putInt("patientId", patientId)
+            args.putSerializable("patientId", patientId)
             fragment.arguments = args
             return fragment
         }

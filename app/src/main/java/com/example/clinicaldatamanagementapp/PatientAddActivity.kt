@@ -11,6 +11,7 @@ import com.example.clinicaldatamanagementapp.database.DatabaseBuilder
 import com.example.clinicaldatamanagementapp.database.PatientEntity
 import com.example.clinicaldatamanagementapp.database.UserEntity
 import com.example.clinicaldatamanagementapp.databinding.ActivityPatientAddBinding
+import com.example.clinicaldatamanagementapp.database.Patient
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -18,6 +19,10 @@ import java.util.Locale
 
 class PatientAddActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPatientAddBinding
+
+    companion object {
+        val patients = ArrayList<Patient>()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,22 +42,38 @@ class PatientAddActivity : AppCompatActivity() {
                 null
             }
 
-            lifecycleScope.launch {
-                val newPatient =  PatientEntity(
-                fullName = fullName,
-                dateOfBirth = dateOfBirth ?: Date(),
-                location = location
-            )
-                val database = DatabaseBuilder.getDatabase(context=this@PatientAddActivity)
+            if (dateOfBirth != null) {
+                val newPatient = Patient(
+                    fullName = fullName,
+                    dateOfBirth = dateOfBirth,
+                    location = location
+                )
+                patients.add(newPatient)
+                Toast.makeText(this@PatientAddActivity, "Patient created successfully", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, PatientListActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+                startActivity(intent)
+            } else {
+                Toast.makeText(this@PatientAddActivity, "Invalid date format", Toast.LENGTH_SHORT).show()
+            }
 
-                database.patientDao().insertPatients(listOf(newPatient))
-                runOnUiThread {
-                    Toast.makeText(this@PatientAddActivity, "Patient created successfully", Toast.LENGTH_SHORT).show()
+
+//            lifecycleScope.launch {
+//                val newPatient =  PatientEntity(
+//                fullName = fullName,
+//                dateOfBirth = dateOfBirth ?: Date(),
+//                location = location
+//            )
+//                val database = DatabaseBuilder.getDatabase(context=this@PatientAddActivity)
+//
+//                database.patientDao().insertPatients(listOf(newPatient))
+//                runOnUiThread {
+//                    Toast.makeText(this@PatientAddActivity, "Patient created successfully", Toast.LENGTH_SHORT).show()
 //                    Toast.makeText(this@SignUpActivity, "Sign Up Successful", Toast.LENGTH_SHORT).show()
 //                    val intent = Intent(this@SignUpActivity, SignInActivity::class.java)
 //                    startActivity(intent)
-                }
-            }
+                //}
+            //}
         }
     }
 

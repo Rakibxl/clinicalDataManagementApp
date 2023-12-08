@@ -24,28 +24,52 @@ class SignInActivity : AppCompatActivity() {
         val emailEditText: EditText = findViewById(R.id.emailEditText)
         val passwordEditText: EditText = findViewById(R.id.passwordEditText)
         val signInButton: Button = findViewById(R.id.signInButton)
+        val signUpLink: TextView = findViewById(R.id.signUpLink) // Re-enable this
+
 
         signInButton.setOnClickListener {
+
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
 
-            lifecycleScope.launch {
-                val database = DatabaseBuilder.getDatabase(context = this@SignInActivity)
-
-                val user = database.userDao().getUser(email, password)
-                if (user != null) {
-                    val intent = Intent(this@SignInActivity, HomeActivity::class.java)
-                    startActivity(intent)
-                } else {
-                    Toast.makeText(this@SignInActivity, "User name or password is wrong", Toast.LENGTH_SHORT).show()
-                }
+            val userExists = SignUpActivity.users.any { user ->
+                user.email == email && user.password == password
             }
+
+            if (userExists) {
+                val intent = Intent(this@SignInActivity, HomeActivity::class.java)
+                startActivity(intent)
+            } else {
+                Toast.makeText(this@SignInActivity, "User name or password is wrong", Toast.LENGTH_SHORT).show()
+            }
+
+//            val intent = Intent(this@SignInActivity, HomeActivity::class.java)
+//                   startActivity(intent)
+//            val email = emailEditText.text.toString()
+//            val password = passwordEditText.text.toString()
+//
+//            lifecycleScope.launch {
+//                val database = DatabaseBuilder.getDatabase(context = this@SignInActivity)
+//
+//                val user = database.userDao().getUser(email, password)
+//                if (user != null) {
+//                    val intent = Intent(this@SignInActivity, HomeActivity::class.java)
+//                    startActivity(intent)
+//                } else {
+//                    Toast.makeText(this@SignInActivity, "User name or password is wrong", Toast.LENGTH_SHORT).show()
+//                }
+//            }
         }
 
-        val signUpLink: TextView = findViewById(R.id.signUpLink)
         signUpLink.setOnClickListener {
             val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
         }
+
+//        val signUpLink: TextView = findViewById(R.id.signUpLink)
+//        signUpLink.setOnClickListener {
+//            val intent = Intent(this, SignUpActivity::class.java)
+//            startActivity(intent)
+//        }
     }
 }

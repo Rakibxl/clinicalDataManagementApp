@@ -8,17 +8,15 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.clinicaldatamanagementapp.database.HealthData
+import com.example.clinicaldatamanagementapp.database.Patient
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.UUID
 
-data class HealthData(
-    val timestamp: String,
-    val bloodPressure: String,
-    val respiratoryRate: String,
-    val bloodOxygen: String,
-    val heartBeatRate: String
-)
 
 class ViewHealthDataFragment : Fragment() {
-    private var patientId: Int = -1
+    private var patientId: UUID? = null
     private lateinit var healthDataRecyclerView: RecyclerView
     private val healthDataAdapter = HealthDataAdapter()
 
@@ -33,28 +31,25 @@ class ViewHealthDataFragment : Fragment() {
         healthDataRecyclerView.layoutManager = LinearLayoutManager(context)
         healthDataRecyclerView.adapter = healthDataAdapter
 
-        // Here you can populate your health data list
-        // For now, let's use some static data for demonstration
-        val staticHealthData = listOf(
-            HealthData("2023-03-01T12:00:00", "120/80", "16", "98%", "70 bpm"),
-            // Add more data here
-        )
-        healthDataAdapter.healthDataList = staticHealthData
-        healthDataAdapter.notifyDataSetChanged()
-
         arguments?.let {
-            patientId = it.getInt("patientId")
-            titleTextView.text = "Health Data History for Patient $patientId"
+            patientId = it.getSerializable("patientId") as UUID?
+            val patientName = PatientAddActivity.patients.find { patient -> patient.id == patientId }?.fullName
+            titleTextView.text = patientName?.let { name -> "Add Health Data for Patient $name" } ?: "New Patient"
         }
+
+        // Filter and display health data for the specific patient
+        val patientSpecificData = AddHealthDataFragment.healthDataRecords.filter { it.patientId == patientId }
+        healthDataAdapter.healthDataList = patientSpecificData
+        healthDataAdapter.notifyDataSetChanged()
 
         return view
     }
 
     companion object {
-        fun newInstance(patientId: Int): ViewHealthDataFragment {
+        fun newInstance(patientId: UUID): ViewHealthDataFragment {
             val fragment = ViewHealthDataFragment()
             val args = Bundle()
-            args.putInt("patientId", patientId)
+            args.putSerializable("patientId", patientId)
             fragment.arguments = args
             return fragment
         }
@@ -77,17 +72,16 @@ class ViewHealthDataFragment : Fragment() {
 
         class HealthDataViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             private val bloodPressureTextView: TextView = view.findViewById(R.id.bloodPressureTextView)
-            private val respiratoryRateTextView: TextView = view.findViewById(R.id.respiratoryRateTextView)
             private val bloodOxygenTextView: TextView = view.findViewById(R.id.bloodOxygenTextView)
             private val heartBeatRateTextView: TextView = view.findViewById(R.id.heartBeatRateTextView)
             private val timestampTextView: TextView = view.findViewById(R.id.timestampTextView)
 
             fun bind(healthData: HealthData) {
                 bloodPressureTextView.text = "Blood Pressure: ${healthData.bloodPressure}"
-                respiratoryRateTextView.text = "Respiratory Rate: ${healthData.respiratoryRate}"
                 bloodOxygenTextView.text = "Blood Oxygen: ${healthData.bloodOxygen}"
                 heartBeatRateTextView.text = "Heart Beat Rate: ${healthData.heartBeatRate}"
-                timestampTextView.text = "Date: ${healthData.timestamp}"
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                timestampTextView.text = "Date: ${dateFormat.format(healthData.insertDate)}"
             }
         }
     }
