@@ -50,6 +50,7 @@
         app:layout_constraintStart_toStartOf="@+id/emailEditText"
         app:layout_constraintTop_toBottomOf="@+id/passwordEditText" />
 
+
     <Button
         android:id="@+id/signInButton"
         android:layout_width="0dp"
@@ -60,7 +61,7 @@
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="@id/passwordEditText"
         app:layout_constraintStart_toStartOf="@+id/passwordEditText"
-        app:layout_constraintTop_toBottomOf="@+id/passwordEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/rememberMeCheckBox" />
 
     <TextView
         android:id="@+id/signUpPrompt"

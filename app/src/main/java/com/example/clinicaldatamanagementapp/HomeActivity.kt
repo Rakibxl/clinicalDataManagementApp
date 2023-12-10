@@ -22,5 +22,13 @@ class HomeActivity : AppCompatActivity() {
             val intent = Intent(this, PatientAddActivity::class.java)
             startActivity(intent)
         }
+
+        val logoutButton = findViewById<Button>(R.id.logoutButton)
+        logoutButton.setOnClickListener {
+            val intent = Intent(this, SignInActivity::class.java)
+            startActivity(intent)
+        }
+
+
     }
 }

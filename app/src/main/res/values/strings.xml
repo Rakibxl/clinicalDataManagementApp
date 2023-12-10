@@ -21,6 +21,9 @@
     <string name="save">Save</string>
     <string name="mapTypeToggleOnText">Hybrid</string>
     <string name="mapTypeToggleOffText">Map</string>
+    <string name="AppTitle">Clinical management</string>
+    <string name="MapTitle"> Patient Map</string>
+    <string name="logout">Logout</string>
 
 
 </resources>

@@ -3,19 +3,19 @@ package com.example.clinicaldatamanagementapp.database
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.util.Date
 
 @Entity(
     tableName = "patienthealthinfos",
-    foreignKeys = [
-        ForeignKey(
-            entity = PatientEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["patientId"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ]
+    foreignKeys = [ForeignKey(
+        entity = PatientEntity::class,
+        parentColumns = ["id"],
+        childColumns = ["patientId"],
+        onDelete = ForeignKey.CASCADE
+    )],
+    indices = [Index("patientId")]
 )
 data class PatientHealthInformationEntity(
     @PrimaryKey(autoGenerate = true)

@@ -4,7 +4,7 @@ import java.util.Date
 import java.util.UUID
 
 public data class Patient(
-    val id: UUID = UUID.randomUUID(),
+    val id: Int = 0,
     val fullName: String,
     val dateOfBirth: Date,
     val location: String

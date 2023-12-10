@@ -1,7 +1,6 @@
 package com.example.clinicaldatamanagementapp
 
 import android.content.Intent
-import android.location.Geocoder
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,110 +9,62 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.ToggleButton
-import androidx.activity.viewModels
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.clinicaldatamanagementapp.database.Patient
 import androidx.room.Room
+import com.example.clinicaldatamanagementapp.application.ClinicalDataManagementApp.Companion.database
 import com.example.clinicaldatamanagementapp.database.ClinicalDataManagementDatabase
-import com.example.clinicaldatamanagementapp.database.DatabaseBuilder
-import com.example.clinicaldatamanagementapp.viewModel.MainActivityViewModel
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.example.clinicaldatamanagementapp.database.PatientEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.Period
-import java.time.ZoneId
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
-import java.util.UUID
-
+import java.util.*
 
 class PatientListActivity : AppCompatActivity() {
 
     private lateinit var patientsRecyclerView: RecyclerView
     private val patientsAdapter = PatientsAdapter()
-    private lateinit var toggleButton: ToggleButton
+    private lateinit var mapTypeToggle: ToggleButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_patient_list)
+        val toolbar : Toolbar = findViewById(R.id.topAppBar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        toolbar.navigationIcon = ResourcesCompat.getDrawable(resources,R.drawable.circle_left_regular,null)
+        toolbar.setNavigationOnClickListener{
+            finish()
+        }
 
-        toggleButton = findViewById(R.id.mapTypeToggle)
-        patientsRecyclerView = findViewById(R.id.patientsRecyclerView)
-        patientsRecyclerView.layoutManager = LinearLayoutManager(this)
-        patientsRecyclerView.adapter = patientsAdapter
+        mapTypeToggle = findViewById(R.id.mapTypeToggle)
 
-        fetchPatients()
-
-        toggleButton.setOnCheckedChangeListener { _, isChecked ->
+        mapTypeToggle.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 val intent = Intent(this, MapActivity::class.java)
                 startActivity(intent)
             }
         }
 
-    }
+        patientsRecyclerView = findViewById(R.id.patientsRecyclerView)
+        patientsRecyclerView.layoutManager = LinearLayoutManager(this)
+        patientsRecyclerView.adapter = patientsAdapter
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
         fetchPatients()
     }
-    override fun onResume() {
-        super.onResume()
-        fetchPatients() // Refresh the list every time
-    }
-
-//    private fun fetchPatients() {
-//        lifecycleScope.launch {
-//            val database = DatabaseBuilder.getDatabase(context = this@PatientListActivity)
-//            val patientsFromDb = database.patientDao().getAllPatients()
-//            val patients = patientsFromDb.map { dbPatient ->
-//                Patient(dbPatient.id, dbPatient.fullName, dbPatient.dateOfBirth)
-//            }
-//            runOnUiThread {
-//                patientsAdapter.patients = patients
-//                patientsAdapter.notifyDataSetChanged()
-//            }
-//        }
-//    }
 
     private fun fetchPatients() {
-
-        val patients = PatientAddActivity.patients
-
-        // Update the adapter's data and notify the adapter about the data set change.
-        patientsAdapter.patients = patients
-        patientsAdapter.notifyDataSetChanged()
-
-//        val dummyPatients = listOf(
-//            Patient(UUID.randomUUID(), "John Doe", parseDate("1992-05-07"), "Toronto"),
-//            Patient(UUID.randomUUID(), "Jane Smith", parseDate("1985-05-15"), "Montreal"),
-//            Patient(UUID.randomUUID(), "Emily Johnson", parseDate("2000-12-20"), "Edmonton")
-//            // Add more patients as needed
-//        )
-//
-//        patientsAdapter.patients = dummyPatients
-//        patientsAdapter.notifyDataSetChanged()
-
-//        patientsAdapter.patients = dummyPatients
-//        patientsAdapter.notifyDataSetChanged()
-//
-//        val patients = PatientAddActivity.patients
-//        patientsAdapter.patients = ArrayList(patients)
-//        patientsAdapter.notifyDataSetChanged()
-    }
-
-    private fun parseDate(dateString: String): Date {
-        val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        return format.parse(dateString) ?: Date() // Returns the current date if parsing fails
+        lifecycleScope.launch(Dispatchers.IO) {
+            val patientsFromDb = database.patientDao().getAllPatients()
+            runOnUiThread {
+                patientsAdapter.patients = patientsFromDb
+                patientsAdapter.notifyDataSetChanged()
+            }
+        }
     }
 
     private fun calculateAge(dob: Date): Int {
@@ -128,7 +79,7 @@ class PatientListActivity : AppCompatActivity() {
     }
 
     inner class PatientsAdapter : RecyclerView.Adapter<PatientsAdapter.PatientViewHolder>() {
-        var patients: List<Patient> = listOf()
+        var patients: List<PatientEntity> = listOf()
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PatientViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_patient, parent, false)
@@ -151,8 +102,7 @@ class PatientListActivity : AppCompatActivity() {
             private val ivAddHealthData: ImageView = view.findViewById(R.id.ivAddHealthData)
             private val ivViewHistory: ImageView = view.findViewById(R.id.ivViewHistory)
 
-            fun bind(patient: Patient) {
-
+            fun bind(patient: PatientEntity) {
                 tvPatientID.text = "ID: ${patient.id}"
                 tvPatientName.text = patient.fullName
                 tvPatientAge.text = "Age: ${calculateAge(patient.dateOfBirth)}"
@@ -177,6 +127,5 @@ class PatientListActivity : AppCompatActivity() {
                 }
             }
         }
-
     }
 }
